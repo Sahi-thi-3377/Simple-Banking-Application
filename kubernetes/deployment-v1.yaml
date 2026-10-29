@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
       - name: banking-container
-        image: sahithi3377/simple-banking-application:v2
+        image: sahithi3377/simple-banking-application:v1
         ports:
         - containerPort: 5000
