@@ -1,6 +1,5 @@
-.git/
-.github/
-__pycache__/
-.pytest_cache/
 venv/
-k8s/
+__pycache__/
+*.pyc
+.git/
+banking.db
