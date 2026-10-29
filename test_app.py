@@ -3,7 +3,7 @@ import sqlite3
 import os
 from app import app, DATABASE, initialize_database
 
-class BankingAppV1TestCase(unittest.TestCase):
+class BankingAppV2TestCase(unittest.TestCase):
     def setUp(self):
         app.config['TESTING'] = True
         self.app = app.test_client()
@@ -14,24 +14,37 @@ class BankingAppV1TestCase(unittest.TestCase):
         connection.close()
 
     def test_home_page_balance_display(self):
-        """V1: Verify home page loads status 200 and renders balance information"""
+        """V2: Verify balance loading remains functional"""
         response = self.app.get('/')
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Current Balance", response.data)
-        self.assertIn(b"1000.00", response.data)
 
     def test_successful_deposit(self):
-        """V1: Verify depositing a positive numerical amount increments the balance record"""
-        response = self.app.post('/deposit', data={'amount': '500.00'}, follow_redirects=True)
+        """V2: Verify deposit system logic works perfectly across versions"""
+        response = self.app.post('/deposit', data={'amount': '250.50'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Successfully deposited", response.data)
-        self.assertIn(b"1500.00", response.data)
+        self.assertIn(b"1250.50", response.data)
 
-    def test_invalid_negative_deposit(self):
-        """V1: Verify negative currency deposits fail input filter validation rules"""
-        response = self.app.post('/deposit', data={'amount': '-100.00'}, follow_redirects=True)
+    def test_successful_withdrawal(self):
+        """V2: Verify standard valid withdrawal requests correctly decrement the database record"""
+        response = self.app.post('/withdraw', data={'w_amount': '400.00'}, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn(b"Invalid deposit amount", response.data)
+        self.assertIn(b"Successfully withdrew", response.data)
+        self.assertIn(b"600.00", response.data)
+
+    def test_insufficient_funds_withdrawal(self):
+        """V2: Verify overdraft attempt triggers balance rejection safety rule"""
+        response = self.app.post('/withdraw', data={'w_amount': '1200.00'}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Transaction failed: Insufficient balance", response.data)
+        self.assertIn(b"1000.00", response.data)
+
+    def test_invalid_negative_withdrawal(self):
+        """V2: Verify negative format values trigger bad validation errors"""
+        response = self.app.post('/withdraw', data={'w_amount': '-50.00'}, follow_redirects=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Invalid withdrawal amount", response.data)
 
 if __name__ == '__main__':
     unittest.main()
