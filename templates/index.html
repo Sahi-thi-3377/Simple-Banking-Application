@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Banking Application</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f1f5f9; margin: 0; padding: 30px; }
+        .container { max-width: 600px; margin: auto; }
+        h1, h2 { color: #1e293b; }
+        .card { background: white; padding: 25px; margin-bottom: 25px; border-radius: 10px; box-shadow: 0 3px 10px rgba(0,0,0,0.07); }
+        .balance-box { background: #2563eb; color: white; padding: 20px; border-radius: 10px; text-align: center; font-size: 24px; font-weight: bold; }
+        label { display: block; margin: 15px 0 5px; font-weight: bold; }
+        input { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 5px; }
+        button { margin-top: 15px; padding: 12px 20px; background: #10b981; color: white; border: none; border-radius: 5px; cursor: pointer; width: 100%; font-size: 16px; }
+        button.withdraw { background: #ef4444; }
+        .message { padding: 12px; border-radius: 5px; margin-bottom: 20px; font-weight: bold; text-align: center; }
+        .success { background: #dcfce7; color: #166534; }
+        .error { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Simple Banking Application</h1>
+        
+        {% if message %}
+            <div class="message {% if 'failed' in message or 'Invalid' in message or 'Insufficient' in message %}error{% else %}success{% endif %}">
+                {{ message }}
+            </div>
+        {% endif %}
+
+        <div class="card balance-box">
+            Current Balance: ₹{{ "%.2f"|format(balance) }}
+        </div>
+        <div class="card">
+            <h2>Deposit Money</h2>
+            <form method="POST" action="/deposit">
+                <label for="amount">Amount (₹):</label>
+                <input type="number" step="0.01" id="amount" name="amount" min="1" required>
+                <button type="submit">Deposit</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Withdraw Money</h2>
+            <form method="POST" action="/withdraw">
+                <label for="w_amount">Amount (₹):</label>
+                <input type="number" step="0.01" id="w_amount" name="w_amount" min="1" required>
+                <button type="submit" class="withdraw">Withdraw</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
